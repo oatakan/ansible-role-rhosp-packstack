@@ -1,0 +1,15 @@
+---
+- name: list security groups
+  shell: source /root/keystonerc_admin && neutron security-group-list -f json
+  register: security_groups
+
+- name: add icmp rule to security groups
+  shell: source /root/keystonerc_admin && neutron security-group-rule-create --protocol icmp --direction ingress {{ item.id }}
+  with_items:
+    - "{{ security_groups.stdout }}"
+
+- name: add rules to security groups
+  shell: source /root/keystonerc_admin && neutron security-group-rule-create --protocol tcp --port-range-min {{ item[1] }} --port-range-max {{ item[1] }} --direction ingress {{ item[0].id }}
+  with_nested:
+    - "{{ security_groups.stdout }}"
+    - "{{ security_rules.ports }}"

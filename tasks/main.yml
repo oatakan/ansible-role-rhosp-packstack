@@ -1,0 +1,3 @@
+- include: install.yml
+- include: network.yml
+- include: secgroup.yml

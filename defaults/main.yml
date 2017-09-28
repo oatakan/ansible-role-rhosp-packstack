@@ -1,0 +1,13 @@
+---
+neutron_floating_ip_start: 192.168.1.80
+neutron_floating_ip_end: 192.168.1.99
+neutron_floating_ip_gw: 192.168.1.254
+neutron_floating_network: 192.168.1.0/24
+neutron_private_network: 192.168.200.0/24
+neutron_private_dns: 8.8.8.8
+
+security_rules:
+  ports:
+    - 22
+    - 3389
+    - 443

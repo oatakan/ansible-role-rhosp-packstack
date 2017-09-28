@@ -1,0 +1,23 @@
+galaxy_info:
+  author: Orcun Atakan
+  description: Ansible galaxy role for installing single-node Red Hat OpenStack Platform using packstack on RHEL and CentOS systems.
+  company: Red Hat
+
+  license: license (GPLv2, CC-BY, etc)
+
+  min_ansible_version: 2.1
+
+  platforms:
+  - name: EL
+    versions:
+    - all
+
+  categories:
+  - all
+
+  galaxy_tags:
+  - openstack
+  - rhosp
+  - packstack
+
+dependencies: []

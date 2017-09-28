@@ -1,0 +1,78 @@
+---
+- name: clear router gateway
+  shell: source /root/keystonerc_admin && neutron router-gateway-clear router1
+  args:
+    executable: /bin/bash
+
+- name: delete public subnet
+  shell: source /root/keystonerc_admin && neutron subnet-delete public_subnet
+  args:
+    executable: /bin/bash
+
+- name: delete public network
+  shell: source /root/keystonerc_admin && neutron net-delete public
+  args:
+    executable: /bin/bash
+
+- name: determine dns server
+  shell: grep -m 1 nameserver /etc/resolv.conf | awk '{ print $2}'
+  register: dns
+
+- name: create ifcfg-br-ex file on compute nodes
+  template:
+    src: ../templates/ifcfg-br-ex
+    dest: /etc/sysconfig/network-scripts/ifcfg-br-ex
+
+- name: replace ifcfg-{{ ansible_default_ipv4.interface }} file on compute nodes
+  template:
+    src: ../templates/ifcfg-eth0
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}"
+
+- name: reboot system
+  shell: sleep 2 && systemctl reboot
+  async: 1
+  poll: 0
+  ignore_errors: true
+
+- name: waiting for server to come online
+  local_action:
+    wait_for host: "{{ ansible_ssh_host | default(inventory_hostname) }}"
+    port: 22
+    search_regex: OpenSSH
+    delay: 10
+  become: false
+
+- name: create a neutron external network
+  shell: source /root/keystonerc_admin && neutron net-create public --router:external=True
+  args:
+    executable: /bin/bash
+
+- name: create a neutron public subnet
+  shell: source /root/keystonerc_admin && neutron subnet-create --name public_subnet --enable_dhcp=False --allocation-pool=start={{ neutron_floating_ip_start }},end={{ neutron_floating_ip_end }} --gateway={{ neutron_floating_ip_gw }} public {{ neutron_floating_network }}
+  args:
+    executable: /bin/bash
+
+- name: create a neutron router
+  shell: source /root/keystonerc_admin && neutron router-create router2
+  args:
+    executable: /bin/bash
+
+- name: set the gateway for the virtual router to be the external network_type
+  shell: source /root/keystonerc_admin && neutron router-gateway-set router2 public
+  args:
+    executable: /bin/bash
+
+- name: create a neutron private network
+  shell: source /root/keystonerc_admin && neutron net-create private_network
+  args:
+    executable: /bin/bash
+
+- name: create a neutron private subnet
+  shell: source /root/keystonerc_admin && neutron subnet-create --dns-nameserver {{ neutron_private_dns }} --name private_vmsubnet private_network {{ neutron_private_network }}
+  args:
+    executable: /bin/bash
+
+- name: add an interface for the private subnet to the virtual router
+  shell: source /root/keystonerc_admin && neutron router-interface-add router2 private_vmsubnet
+  args:
+    executable: /bin/bash

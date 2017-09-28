@@ -1,0 +1,6 @@
+NAME={{ ansible_default_ipv4.interface }}
+DEVICE={{ ansible_default_ipv4.interface }}
+ONBOOT=yes
+TYPE=OVSPort
+DEVICETYPE=ovs
+OVS_BRIDGE=br-ex
