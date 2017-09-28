@@ -25,6 +25,7 @@
     host: "{{ ansible_ssh_host | default(inventory_hostname) }}"
     port: "{{ ssh_port }}"
     search_regex: OpenSSH
+  delegate_to: 127.0.0.1
 
 - name: copy packstack uninstall script
   copy:
