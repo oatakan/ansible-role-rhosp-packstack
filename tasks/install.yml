@@ -26,6 +26,7 @@
     port: "{{ ssh_port }}"
     search_regex: OpenSSH
   delegate_to: 127.0.0.1
+  become: no
 
 - name: copy packstack uninstall script
   copy:

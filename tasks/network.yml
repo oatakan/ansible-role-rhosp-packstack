@@ -43,6 +43,7 @@
     port: "{{ ssh_port }}"
     search_regex: OpenSSH
   delegate_to: 127.0.0.1
+  become: no
 
 - name: create a neutron external network
   shell: source /root/keystonerc_admin && neutron net-create public --router:external=True
