@@ -34,13 +34,11 @@
   poll: 0
   ignore_errors: true
 
-- name: waiting for server to come online
-  local_action:
-    wait_for host: "{{ ansible_ssh_host | default(inventory_hostname) }}"
-    port: 22
+- name: waiting for servers to come online
+  wait_for:
+    host: "{{ ansible_ssh_host | default(inventory_hostname) }}"
+    port: "{{ ssh_port }}"
     search_regex: OpenSSH
-    delay: 10
-  become: false
 
 - name: create a neutron external network
   shell: source /root/keystonerc_admin && neutron net-create public --router:external=True
