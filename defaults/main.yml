@@ -13,3 +13,5 @@ security_rules:
     - 443
 
 ssh_port: 22
+
+keystone_admin_password: password
