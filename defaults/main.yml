@@ -15,3 +15,5 @@ security_rules:
 ssh_port: 22
 
 keystone_admin_password: password
+
+cinder_volumes_size: 100GB

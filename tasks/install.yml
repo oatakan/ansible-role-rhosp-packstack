@@ -35,4 +35,4 @@
     state: latest
 
 - name: deploy packstack
-  shell: packstack --allinone --keystone-admin-passwd={{ keystone_admin_password }}
+  shell: packstack --allinone --keystone-admin-passwd={{ keystone_admin_password }} --os-heat-install=y --cinder-volumes-size={{ cinder_volumes_size }}
