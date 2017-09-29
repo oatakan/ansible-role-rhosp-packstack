@@ -45,6 +45,13 @@
   delegate_to: 127.0.0.1
   become: no
 
+- name: waiting for keystone to be available
+  wait_for:
+    host: "{{ ansible_ssh_host | default(inventory_hostname) }}"
+    port: 5000
+  delegate_to: 127.0.0.1
+  become: no
+
 - name: create a neutron external network
   shell: source /root/keystonerc_admin && neutron net-create public --router:external=True
   args:
