@@ -11,6 +11,8 @@ security_rules:
     - 22
     - 3389
     - 443
+    - 5986
+    - 1433
 
 ssh_port: 22
 
