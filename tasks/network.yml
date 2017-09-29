@@ -38,12 +38,7 @@
     seconds: 5
 
 - name: waiting for servers to come online
-  wait_for:
-    host: "{{ ansible_ssh_host | default(inventory_hostname) }}"
-    port: "{{ ssh_port }}"
-    search_regex: OpenSSH
-  delegate_to: 127.0.0.1
-  become: no
+  wait_for_connection:
 
 - name: waiting for keystone to be available
   wait_for:
