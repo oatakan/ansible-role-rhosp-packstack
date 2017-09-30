@@ -48,12 +48,12 @@
   become: no
 
 - name: create a neutron external network
-  shell: source /root/keystonerc_admin && neutron net-create public --router:external=True
+  shell: source /root/keystonerc_admin && neutron net-create public --provider:network_type flat --provider:physical_network extnet --router:external
   args:
     executable: /bin/bash
 
 - name: create a neutron public subnet
-  shell: source /root/keystonerc_admin && neutron subnet-create --name public_subnet --enable_dhcp=False --allocation-pool=start={{ neutron_floating_ip_start }},end={{ neutron_floating_ip_end }} --gateway={{ neutron_floating_ip_gw }} public {{ neutron_floating_network }}
+  shell: source /root/keystonerc_admin && neutron subnet-create --name public_subnet --disable-dhcp --allocation-pool=start={{ neutron_floating_ip_start }},end={{ neutron_floating_ip_end }} --gateway={{ neutron_floating_ip_gw }} public {{ neutron_floating_network }}
   args:
     executable: /bin/bash
 
