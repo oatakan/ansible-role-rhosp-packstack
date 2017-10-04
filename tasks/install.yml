@@ -11,6 +11,11 @@
     enabled: yes
     state: started
 
+- name: enable nested kvm
+  copy:
+    src: kvm-intel.conf
+    dest: /etc/modprobe.d/kvm-intel.conf
+
 - name: reboot system
   shell: sleep 2 && systemctl reboot
   async: 1
@@ -35,4 +40,4 @@
     state: latest
 
 - name: deploy packstack
-  shell: packstack --allinone --keystone-admin-passwd={{ keystone_admin_password }} --os-heat-install=y --cinder-volumes-size={{ cinder_volumes_size }}
+  shell: packstack --allinone --keystone-admin-passwd={{ keystone_admin_password }} --os-heat-install=y --cinder-volumes-size={{ cinder_volumes_size }} --nova-libvirt-virt-type=kvm
