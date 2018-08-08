@@ -34,7 +34,7 @@
     dest: /root/uninstall_packstack.sh
     mode: "u+rwx,g-wx,o-rwx"
 
-- name: install openstack-packstack package
+- name: enable openstack-packstack on CentOS
   yum:
     name: centos-release-openstack-queens
     state: latest
@@ -44,7 +44,6 @@
   yum:
     name: openstack-packstack
     state: latest
-  when: ansible_distribution == 'Red Hat Enterprise Linux'
 
 - name: deploy packstack
   shell: packstack --allinone --keystone-admin-passwd={{ keystone_admin_password }} --os-heat-install=y --cinder-volumes-size={{ cinder_volumes_size }} --nova-libvirt-virt-type=kvm
