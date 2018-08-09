@@ -1,5 +1,5 @@
 - name: check to see if openstack compute is installed
-  command: openstack compute service list | grep nova-compute | grep enabled
+  shell: source /root/keystonerc_admin && openstack compute service list | grep nova-compute | grep enabled
   register: check_compute
   ignore_errors: yes
 
@@ -8,7 +8,7 @@
     - check_compute is not success
 
 - name: check to see if network service is installed
-  command: openstack network list | grep private_network
+  shell: source /root/keystonerc_admin && openstack network list | grep private_network
   register: check_network
   ignore_errors: yes
 
