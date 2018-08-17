@@ -49,9 +49,21 @@
   shell: packstack --allinone --keystone-admin-passwd={{ keystone_admin_password }} --os-heat-install=y --cinder-volumes-size={{ cinder_volumes_size }} --nova-libvirt-virt-type=kvm
 
 # see issue: https://bugs.launchpad.net/nova/+bug/1653430
-- name: fix kvm virtual type
+- name: fix kvm virtual type for vmware host
   lineinfile:
     path: /etc/nova/nova.conf
     regexp: '^#hw_machine_type='
     insertafter: '^#hw_machine_type='
     line: 'hw_machine_type=x86_64=pc-i440fx-rhel7.2.0'
+  when:
+    - ansible_virtualization_role == 'guest'
+    - ansible_virtualization_type == "VMware"
+
+- name: set cpu mode to none to increase compatibility
+  lineinfile:
+    dest: /etc/nova/nova.conf
+    regexp: '^cpu_mode=(.*)$'
+    line: 'cpu_mode=none'
+    backrefs: yes
+  when:
+    - ansible_virtualization_role == 'host'
