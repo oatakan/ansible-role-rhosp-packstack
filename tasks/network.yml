@@ -40,6 +40,26 @@
 - name: waiting for servers to come online
   wait_for_connection:
 
+- name: debug ansible_ssh_host
+  debug:
+    var: ansible_ssh_host
+
+- name: debug ansible_ssh_host with delegate
+  debug:
+    var: ansible_ssh_host
+  delegate_to: 127.0.0.1
+  become: no
+
+- name: debug ansible_host
+  debug:
+    var: ansible_host
+
+- name: debug ansible_host with delegate
+  debug:
+    var: ansible_host
+  delegate_to: 127.0.0.1
+  become: no
+
 - name: waiting for keystone to be available
   wait_for:
     host: "{{ ansible_ssh_host | default(inventory_hostname) }}"
