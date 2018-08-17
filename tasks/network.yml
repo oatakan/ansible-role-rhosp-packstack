@@ -3,16 +3,19 @@
   shell: source /root/keystonerc_admin && neutron router-gateway-clear router1
   args:
     executable: /bin/bash
+  ignore_errors: true
 
 - name: delete public subnet
   shell: source /root/keystonerc_admin && neutron subnet-delete public_subnet
   args:
     executable: /bin/bash
+  ignore_errors: true
 
 - name: delete public network
   shell: source /root/keystonerc_admin && neutron net-delete public
   args:
     executable: /bin/bash
+  ignore_errors: true
 
 - name: determine dns server
   shell: grep -m 1 nameserver /etc/resolv.conf | awk '{ print $2}'
