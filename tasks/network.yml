@@ -24,7 +24,7 @@
 
 - name: waiting for keystone to be available
   wait_for:
-    host: "{{ ansible_ssh_host | default(inventory_hostname) }}"
+    host: "{{ ansible_host | default(inventory_hostname) }}"
     port: 5000
   delegate_to: 127.0.0.1
   become: no
@@ -69,7 +69,7 @@
 
 - name: waiting for keystone to be available
   wait_for:
-    host: "{{ ansible_ssh_host | default(inventory_hostname) }}"
+    host: "{{ ansible_host | default(inventory_hostname) }}"
     port: 5000
   delegate_to: 127.0.0.1
   become: no
