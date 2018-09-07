@@ -1,6 +1,6 @@
 ---
 
-- name: restart http service
+- name: restart httpd service
   service:
-    name: http
+    name: httpd
     state: restarted

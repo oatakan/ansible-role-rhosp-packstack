@@ -52,7 +52,7 @@
   yum:
     name: openstack-heat-ui
     state: latest
-  notify: restart http service
+  notify: restart httpd service
 
 # see issue: https://bugs.launchpad.net/nova/+bug/1653430
 - name: fix kvm virtual type for vmware host
