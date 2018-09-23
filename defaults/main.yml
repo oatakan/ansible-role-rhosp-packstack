@@ -10,6 +10,7 @@ security_rules:
   ports:
     - 22
     - 80
+    - 8080
     - 3389
     - 443
     - 5986 #winrm
