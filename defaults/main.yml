@@ -21,6 +21,12 @@ security_rules:
     ports:
       - 53
 
+os_flavors:
+  - name: o1.small
+    ram: 3072
+    disk: 30
+    vcpus: 2
+
 ssh_port: 22
 
 keystone_admin_password: password

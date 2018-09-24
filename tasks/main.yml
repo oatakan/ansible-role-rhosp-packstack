@@ -3,7 +3,7 @@
   register: check_compute
   ignore_errors: yes
 
-- include: install.yml
+- include_tasks: install.yml
   when:
     - check_compute is not success
 
@@ -12,8 +12,10 @@
   register: check_network
   ignore_errors: yes
 
-- include: network.yml
+- include_tasks: network.yml
   when:
     - check_network is not success
 
-- include: secgroup.yml
+- include_tasks: secgroup.yml
+
+- include_tasks: flavor.yml
