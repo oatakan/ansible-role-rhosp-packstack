@@ -67,9 +67,17 @@
 
 - name: set cpu mode to none to increase compatibility
   lineinfile:
-    dest: /etc/nova/nova.conf
+    path: /etc/nova/nova.conf
     regexp: '^cpu_mode=(.*)$'
     line: 'cpu_mode=none'
     backrefs: yes
   when:
     - ansible_virtualization_role == 'host'
+
+- name: increase time out for cinder volume creation
+  lineinfile:
+    path: /etc/nova/nova.conf
+    regexp: '^block_device_allocate_retries'
+    insertafter: '^#block_device_allocate_retries'
+    line: 'block_device_allocate_retries=120'
+    backrefs: yes
