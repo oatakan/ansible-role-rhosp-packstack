@@ -77,7 +77,7 @@
 - name: increase time out for cinder volume creation
   lineinfile:
     path: /etc/nova/nova.conf
-    regexp: '^block_device_allocate_retries'
-    insertafter: '^#block_device_allocate_retries'
-    line: 'block_device_allocate_retries=120'
+    regexp: '^block_device_allocate_retries*'
+    insertafter: '^#block_device_allocate_retries*'
+    line: 'block_device_allocate_retries=240'
     backrefs: yes
