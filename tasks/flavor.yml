@@ -3,3 +3,4 @@
 - name: add new flavor(s)
   shell: source /root/keystonerc_admin && openstack flavor create --ram {{ item.ram }} --disk {{ item.disk }} --vcpus {{ item.vcpus }} --public {{ item.name }}
   loop: "{{ os_flavors }}"
+  ignore_errors: yes
