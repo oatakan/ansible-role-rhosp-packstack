@@ -32,13 +32,7 @@
     dest: "/etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}"
 
 - name: reboot system
-  shell: sleep 2 && systemctl reboot
-  async: 1
-  poll: 0
-  ignore_errors: true
-
-- pause:
-    seconds: 5
+  reboot:
 
 - name: waiting for keystone to be available
   wait_for:
