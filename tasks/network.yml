@@ -23,13 +23,16 @@
 
 - name: create ifcfg-br-ex file on compute nodes
   template:
-    src: ../templates/ifcfg-br-ex
+    src: ifcfg-br-ex
     dest: /etc/sysconfig/network-scripts/ifcfg-br-ex
 
 - name: replace ifcfg-{{ ansible_default_ipv4.interface }} file on compute nodes
   template:
-    src: ../templates/ifcfg-eth0
+    src: ifcfg-eth0
     dest: "/etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}"
+
+- pause:
+    seconds: 120
 
 - name: reboot system
   reboot:
