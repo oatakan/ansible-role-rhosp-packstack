@@ -31,9 +31,6 @@
     src: ifcfg-eth0
     dest: "/etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}"
 
-- pause:
-    seconds: 120
-
 - name: reboot system
   reboot:
 
