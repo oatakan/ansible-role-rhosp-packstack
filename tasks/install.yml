@@ -18,6 +18,7 @@
 
 - name: reboot system
   reboot:
+    reboot_timeout: 3600
 
 - name: copy packstack uninstall script
   copy:
