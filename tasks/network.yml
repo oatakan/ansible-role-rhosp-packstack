@@ -1,18 +1,18 @@
 ---
 - name: clear router gateway
-  shell: source /root/keystonerc_admin && neutron router-gateway-clear router1
+  shell: source /root/keystonerc_admin && openstack router set router --no-route
   args:
     executable: /bin/bash
   ignore_errors: true
 
 - name: delete public subnet
-  shell: source /root/keystonerc_admin && neutron subnet-delete public_subnet
+  shell: source /root/keystonerc_admin && openstack subnet delete public_subnet
   args:
     executable: /bin/bash
   ignore_errors: true
 
 - name: delete public network
-  shell: source /root/keystonerc_admin && neutron net-delete public
+  shell: source /root/keystonerc_admin && openstack network delete public
   args:
     executable: /bin/bash
   ignore_errors: true
@@ -42,36 +42,36 @@
   become: no
 
 - name: create a neutron external network
-  shell: source /root/keystonerc_admin && neutron net-create public --provider:network_type flat --provider:physical_network extnet --router:external
+  shell: source /root/keystonerc_admin && openstack network create public --provider-network-type flat --provider-physical-network extnet --external
   args:
     executable: /bin/bash
 
 - name: create a neutron public subnet
-  shell: source /root/keystonerc_admin && neutron subnet-create --name public_subnet --disable-dhcp --allocation-pool=start={{ neutron_floating_ip_start }},end={{ neutron_floating_ip_end }} --gateway={{ neutron_floating_ip_gw }} public {{ neutron_floating_network }}
+  shell: source /root/keystonerc_admin && openstack subnet create public_subnet --no-dhcp --allocation-pool start={{ neutron_floating_ip_start }},end={{ neutron_floating_ip_end }} --gateway={{ neutron_floating_ip_gw }} --network public --subnet-range {{ neutron_floating_network }}
   args:
     executable: /bin/bash
 
 - name: create a neutron router
-  shell: source /root/keystonerc_admin && neutron router-create router2
+  shell: source /root/keystonerc_admin && openstack router create router2
   args:
     executable: /bin/bash
 
 - name: set the gateway for the virtual router to be the external network_type
-  shell: source /root/keystonerc_admin && neutron router-gateway-set router2 public
+  shell: source /root/keystonerc_admin && openstack router set --external-gateway public router2
   args:
     executable: /bin/bash
 
 - name: create a neutron private network
-  shell: source /root/keystonerc_admin && neutron net-create private_network
+  shell: source /root/keystonerc_admin && openstack network create private_network
   args:
     executable: /bin/bash
 
 - name: create a neutron private subnet
-  shell: source /root/keystonerc_admin && neutron subnet-create --dns-nameserver {{ neutron_private_dns }} --name private_vmsubnet private_network {{ neutron_private_network }}
+  shell: source /root/keystonerc_admin && openstack subnet create --dns-nameserver {{ neutron_private_dns }} private_vmsubnet --network private_network --subnet-range {{ neutron_private_network }}
   args:
     executable: /bin/bash
 
 - name: add an interface for the private subnet to the virtual router
-  shell: source /root/keystonerc_admin && neutron router-interface-add router2 private_vmsubnet
+  shell: source /root/keystonerc_admin && openstack router add subnet router2 private_vmsubnet
   args:
     executable: /bin/bash
