@@ -1,6 +1,6 @@
 ---
 - name: clear router gateway
-  shell: source /root/keystonerc_admin && openstack router set router --no-route
+  shell: source /root/keystonerc_admin && openstack router unset router1 --external-gateway
   args:
     executable: /bin/bash
   ignore_errors: true
