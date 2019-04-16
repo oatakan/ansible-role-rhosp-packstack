@@ -38,7 +38,7 @@
     state: latest
 
 - name: deploy packstack
-  shell: packstack --allinone --keystone-admin-passwd={{ keystone_admin_password }} --os-heat-install=y --os-heat-cfn-install=y --os-ceilometer-install=y --os-swift-install=n --cinder-volumes-size={{ cinder_volumes_size }} --nova-libvirt-virt-type=kvm
+  shell: packstack --allinone --keystone-admin-passwd={{ keystone_admin_password }} --os-heat-install=y --os-heat-cfn-install=y --os-ceilometer-install=y --cinder-volumes-size={{ cinder_volumes_size }} --nova-libvirt-virt-type=kvm
 
 - name: install openstack-heat-ui package
   yum:
