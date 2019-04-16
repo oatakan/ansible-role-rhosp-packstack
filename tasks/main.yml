@@ -26,8 +26,8 @@
 #  ignore_errors: yes
 
 - include_tasks: network.yml
-  when:
-    - check_network is not success
+#  when:
+#    - check_network is not success
 
 - include_tasks: secgroup.yml
 
