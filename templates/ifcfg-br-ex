@@ -5,5 +5,5 @@ BOOTPROTO=static
 IPADDR={{ ansible_default_ipv4.address }}
 NETMASK={{ ansible_default_ipv4.netmask }}
 GATEWAY={{ ansible_default_ipv4.gateway }}
-DNS1={{ dns.stdout }}
+DNS1={{ ansible_dns.nameservers[0] }}
 ONBOOT=yes
