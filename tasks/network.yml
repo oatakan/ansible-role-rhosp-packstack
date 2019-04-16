@@ -1,38 +1,44 @@
 ---
-- name: clear router gateway
-  shell: source /root/keystonerc_admin && openstack router unset router1 --external-gateway
-  args:
-    executable: /bin/bash
+
+- name: ensure router1 is deleted
+  os_router:
+    name: router1
+    state: absent
+  delegate_to: localhost
+  become: no
   ignore_errors: true
 
-- name: delete public subnet
-  shell: source /root/keystonerc_admin && openstack subnet delete public_subnet
-  args:
-    executable: /bin/bash
+- name: ensure public_subnet subnet is removed
+  os_subnet:
+    name: public_subnet
+    state: absent
+  delegate_to: localhost
+  become: no
   ignore_errors: true
 
-- name: delete public network
-  shell: source /root/keystonerc_admin && openstack network delete public
-  args:
-    executable: /bin/bash
+- name: ensure public network is removed
+  os_network:
+    name: public
+    state: absent
+  delegate_to: localhost
+  become: no
   ignore_errors: true
-
-- name: determine dns server
-  shell: grep -m 1 nameserver /etc/resolv.conf | awk '{ print $2}'
-  register: dns
 
 - name: create ifcfg-br-ex file on compute nodes
   template:
     src: ifcfg-br-ex
     dest: /etc/sysconfig/network-scripts/ifcfg-br-ex
+  register: create_bridge_interface_file
 
 - name: replace ifcfg-{{ ansible_default_ipv4.interface }} file on compute nodes
   template:
     src: ifcfg-eth0
     dest: "/etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}"
+  register: create_interface_file
 
 - name: reboot system
   reboot:
+  when: create_bridge_interface_file is changed or create_interface_file is changed
 
 - name: waiting for keystone to be available
   wait_for:
@@ -41,37 +47,57 @@
   delegate_to: 127.0.0.1
   become: no
 
-- name: create a neutron external network
-  shell: source /root/keystonerc_admin && openstack network create public --provider-network-type flat --provider-physical-network extnet --external
-  args:
-    executable: /bin/bash
+- name: ensure public network is created
+  os_network:
+    name: public
+    state: present
+    external: yes
+    provider_network_type: flat
+    provider_physical_network: extnet
+  delegate_to: localhost
+  become: no
+  ignore_errors: true
 
-- name: create a neutron public subnet
-  shell: source /root/keystonerc_admin && openstack subnet create public_subnet --no-dhcp --allocation-pool start={{ neutron_floating_ip_start }},end={{ neutron_floating_ip_end }} --gateway={{ neutron_floating_ip_gw }} --network public --subnet-range {{ neutron_floating_network }}
-  args:
-    executable: /bin/bash
+- name: ensure public_subnet subnet is created
+  os_subnet:
+    name: public_subnet
+    state: present
+    enable_dhcp: no
+    allocation_pool_start: "{{ neutron_floating_ip_start }}"
+    allocation_pool_end: "{{ neutron_floating_ip_end }}"
+    gateway_ip: "{{ neutron_floating_ip_gw }}"
+    network_name: public
+    cidr: "{{ neutron_floating_network }}"
+  delegate_to: localhost
+  become: no
+  ignore_errors: true
 
-- name: create a neutron router
-  shell: source /root/keystonerc_admin && openstack router create router2
-  args:
-    executable: /bin/bash
+- name: ensure private network is created
+  os_network:
+    name: private_network
+    state: present
+  delegate_to: localhost
+  become: no
+  ignore_errors: true
 
-- name: set the gateway for the virtual router to be the external network_type
-  shell: source /root/keystonerc_admin && openstack router set --external-gateway public router2
-  args:
-    executable: /bin/bash
+- name: ensure private_vmsubnet subnet is created
+  os_subnet:
+    name: private_vmsubnet
+    state: present
+    dns_nameservers: "{{ hostvars[inventory_hostname].ansible_dns.nameservers }}"
+    network_name: private_network
+    cidr: "{{ neutron_private_network }}"
+  delegate_to: localhost
+  become: no
+  ignore_errors: true
 
-- name: create a neutron private network
-  shell: source /root/keystonerc_admin && openstack network create private_network
-  args:
-    executable: /bin/bash
-
-- name: create a neutron private subnet
-  shell: source /root/keystonerc_admin && openstack subnet create --dns-nameserver {{ neutron_private_dns }} private_vmsubnet --network private_network --subnet-range {{ neutron_private_network }}
-  args:
-    executable: /bin/bash
-
-- name: add an interface for the private subnet to the virtual router
-  shell: source /root/keystonerc_admin && openstack router add subnet router2 private_vmsubnet
-  args:
-    executable: /bin/bash
+- name: ensure router1 is created
+  os_router:
+    name: router1
+    state: present
+    network: public
+    interfaces:
+      - private_vmsubnet
+  delegate_to: localhost
+  become: no
+  ignore_errors: true

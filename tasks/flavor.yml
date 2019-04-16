@@ -9,4 +9,5 @@
     disk: "{{ item.disk }}"
   delegate_to: localhost
   become: no
+  loop: "{{ os_flavors }}"
   ignore_errors: yes

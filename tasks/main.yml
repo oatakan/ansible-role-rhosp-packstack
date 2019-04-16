@@ -20,10 +20,10 @@
   become: no
   delegate_to: localhost
 
-- name: check to see if network service is installed
-  shell: source /root/keystonerc_admin && openstack network list | grep private_network
-  register: check_network
-  ignore_errors: yes
+#- name: check to see if network service is installed
+#  shell: source /root/keystonerc_admin && openstack network list | grep private_network
+#  register: check_network
+#  ignore_errors: yes
 
 - include_tasks: network.yml
   when:

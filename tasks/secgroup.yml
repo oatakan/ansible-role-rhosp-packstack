@@ -1,53 +1,53 @@
 ---
 
-- name: list security groups
-  shell: source /root/keystonerc_admin && openstack security group list -f json
-  register: security_groups
-  ignore_errors: yes
+- name: get project facts
+  os_project_facts:
+  delegate_to: localhost
+  become: no
 
 - name: add icmp rule to security groups
   os_security_group_rule:
+    project: "{{ item.id }}"
     state: present
-    security_group: "{{ item.ID }}"
+    security_group: default
     protocol: icmp
     port_range_min: -1
     port_range_max: -1
     remote_ip_prefix: 0.0.0.0/0
-  register: security_groups
   delegate_to: localhost
   become: no
+  with_items:
+    - "{{ openstack_projects }}"
   ignore_errors: yes
-  loop:
-    - "{{ security_groups.stdout }}"
 
 - name: add tcp rules to security groups
   os_security_group_rule:
+    project: "{{ item.0.id }}"
     state: present
-    security_group: "{{ item.0.ID }}"
+    security_group: default
     protocol: tcp
     port_range_min: "{{ item.1 }}"
     port_range_max: "{{ item.1 }}"
     remote_ip_prefix: 0.0.0.0/0
-  register: security_groups
   delegate_to: localhost
   become: no
-  ignore_errors: yes
-  loop:
-    - "{{ security_groups.stdout }}"
+  with_nested:
+    - "{{ openstack_projects }}"
     - "{{ security_rules.tcp.ports }}"
+  ignore_errors: yes
 
 - name: add udp rules to security groups
   os_security_group_rule:
+    project: "{{ item.0.id }}"
     state: present
-    security_group: "{{ item.0.ID }}"
+    security_group: default
     protocol: udp
     port_range_min: "{{ item.1 }}"
     port_range_max: "{{ item.1 }}"
     remote_ip_prefix: 0.0.0.0/0
-  register: security_groups
   delegate_to: localhost
   become: no
-  ignore_errors: yes
-  loop:
-    - "{{ security_groups.stdout }}"
+  with_nested:
+    - "{{ openstack_projects }}"
     - "{{ security_rules.udp.ports }}"
+  ignore_errors: yes
