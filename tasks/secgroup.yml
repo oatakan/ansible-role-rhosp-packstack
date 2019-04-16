@@ -6,21 +6,48 @@
   ignore_errors: yes
 
 - name: add icmp rule to security groups
-  shell: source /root/keystonerc_admin && openstack security group rule create --protocol ICMP --ingress {{ item.ID }}
-  with_items:
-    - "{{ security_groups.stdout }}"
+  os_security_group_rule:
+    state: present
+    security_group: "{{ item.ID }}"
+    protocol: icmp
+    port_range_min: -1
+    port_range_max: -1
+    remote_ip_prefix: 0.0.0.0/0
+  register: security_groups
+  delegate_to: localhost
+  become: no
   ignore_errors: yes
+  loop:
+    - "{{ security_groups.stdout }}"
 
 - name: add tcp rules to security groups
-  shell: source /root/keystonerc_admin && openstack security group rule create --protocol TCP --dst-port {{ item.1 }} --ingress {{ item.0.ID }}
-  with_nested:
+  os_security_group_rule:
+    state: present
+    security_group: "{{ item.0.ID }}"
+    protocol: tcp
+    port_range_min: "{{ item.1 }}"
+    port_range_max: "{{ item.1 }}"
+    remote_ip_prefix: 0.0.0.0/0
+  register: security_groups
+  delegate_to: localhost
+  become: no
+  ignore_errors: yes
+  loop:
     - "{{ security_groups.stdout }}"
     - "{{ security_rules.tcp.ports }}"
-  ignore_errors: yes
 
 - name: add udp rules to security groups
-  shell: source /root/keystonerc_admin && openstack security group rule create --protocol UDP --dst-port {{ item.1 }} --ingress {{ item.0.ID }}
-  with_nested:
+  os_security_group_rule:
+    state: present
+    security_group: "{{ item.0.ID }}"
+    protocol: udp
+    port_range_min: "{{ item.1 }}"
+    port_range_max: "{{ item.1 }}"
+    remote_ip_prefix: 0.0.0.0/0
+  register: security_groups
+  delegate_to: localhost
+  become: no
+  ignore_errors: yes
+  loop:
     - "{{ security_groups.stdout }}"
     - "{{ security_rules.udp.ports }}"
-  ignore_errors: yes

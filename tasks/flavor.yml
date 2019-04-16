@@ -1,6 +1,12 @@
 ---
 
 - name: add new flavor(s)
-  shell: source /root/keystonerc_admin && openstack flavor create --ram {{ item.ram }} --disk {{ item.disk }} --vcpus {{ item.vcpus }} --public {{ item.name }}
-  loop: "{{ os_flavors }}"
+  os_nova_flavor:
+    state: present
+    name: "{{ item.name }}"
+    ram: "{{ item.ram }}"
+    vcpus: "{{ item.vcpus }}"
+    disk: "{{ item.disk }}"
+  delegate_to: localhost
+  become: no
   ignore_errors: yes

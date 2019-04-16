@@ -7,6 +7,19 @@
   when:
     - check_compute is not success
 
+- name: check openstack config file
+  stat:
+    path: "{{ config_file }}"
+  register: st
+  become: no
+  delegate_to: localhost
+
+- name: include openstack details
+  include_vars: "{{ config_file }}"
+  when: st.stat.exists and st.stat.isreg
+  become: no
+  delegate_to: localhost
+
 - name: check to see if network service is installed
   shell: source /root/keystonerc_admin && openstack network list | grep private_network
   register: check_network

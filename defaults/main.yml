@@ -1,4 +1,7 @@
 ---
+
+config_file: "{{ lookup('env', 'OS_CLIENT_CONFIG_FILE') }}"
+
 neutron_floating_ip_start: 192.168.1.80
 neutron_floating_ip_end: 192.168.1.99
 neutron_floating_ip_gw: 192.168.1.254
