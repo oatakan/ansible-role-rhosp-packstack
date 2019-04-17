@@ -1,35 +1,28 @@
 ---
 
-- name: ensure router1 is deleted
-  os_router:
-    name: router1
-    state: absent
-  delegate_to: localhost
-  become: no
-  ignore_errors: true
-
-- name: ensure public_subnet subnet is removed
-  os_subnet:
-    name: public_subnet
-    state: absent
-  delegate_to: localhost
-  become: no
-  ignore_errors: true
-
-- name: ensure public network is removed
-  os_network:
-    name: public
-    state: absent
-  delegate_to: localhost
-  become: no
-  ignore_errors: true
-
-#- name: check ifcfg-br-ex file on compute nodes
-#  stat:
-#    path: /etc/sysconfig/network-scripts/ifcfg-br-ex
-#  register: stat_bridge_interface_file
+#- name: ensure router1 is deleted
+#  os_router:
+#    name: router1
+#    state: absent
+#  delegate_to: localhost
+#  become: no
+#  ignore_errors: true
 #
-#- block:
+#- name: ensure public_subnet subnet is removed
+#  os_subnet:
+#    name: public_subnet
+#    state: absent
+#  delegate_to: localhost
+#  become: no
+#  ignore_errors: true
+#
+#- name: ensure public network is removed
+#  os_network:
+#    name: public
+#    state: absent
+#  delegate_to: localhost
+#  become: no
+#  ignore_errors: true
 
 - name: create ifcfg-br-ex file on compute nodes
   template:
@@ -54,8 +47,6 @@
   delegate_to: 127.0.0.1
   become: no
   when: create_bridge_interface_file is changed
-
-#  when: stat_bridge_interface_file.stat.exists == False
 
 - name: ensure public network is created
   os_network:
