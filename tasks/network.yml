@@ -55,7 +55,7 @@
     become: no
     when: create_bridge_interface_file is changed
 
-when: not stat_bridge_interface_file.stat.exists
+  when: not stat_bridge_interface_file.stat.exists
 
 - name: ensure public network is created
   os_network:
