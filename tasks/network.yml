@@ -31,31 +31,31 @@
 
 - block:
 
-  - name: create ifcfg-br-ex file on compute nodes
-    template:
-      src: ifcfg-br-ex
-      dest: /etc/sysconfig/network-scripts/ifcfg-br-ex
-    register: create_bridge_interface_file
+    - name: create ifcfg-br-ex file on compute nodes
+      template:
+        src: ifcfg-br-ex
+        dest: /etc/sysconfig/network-scripts/ifcfg-br-ex
+      register: create_bridge_interface_file
 
-  - name: replace ifcfg-{{ ansible_default_ipv4.interface }} file on compute nodes
-    template:
-      src: ifcfg-eth0
-      dest: "/etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}"
-    when: create_bridge_interface_file is changed
+    - name: replace ifcfg-{{ ansible_default_ipv4.interface }} file on compute nodes
+      template:
+        src: ifcfg-eth0
+        dest: "/etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}"
+      when: create_bridge_interface_file is changed
 
-  - name: reboot system
-    reboot:
-    when: create_bridge_interface_file is changed
+    - name: reboot system
+      reboot:
+      when: create_bridge_interface_file is changed
 
-  - name: waiting for keystone to be available
-    wait_for:
-      host: "{{ ansible_host | default(inventory_hostname) }}"
-      port: 5000
-    delegate_to: 127.0.0.1
-    become: no
-    when: create_bridge_interface_file is changed
+    - name: waiting for keystone to be available
+      wait_for:
+        host: "{{ ansible_host | default(inventory_hostname) }}"
+        port: 5000
+      delegate_to: 127.0.0.1
+      become: no
+      when: create_bridge_interface_file is changed
 
-  when: not stat_bridge_interface_file.stat.exists
+  when: stat_bridge_interface_file.stat.exists == False
 
 - name: ensure public network is created
   os_network:
