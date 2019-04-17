@@ -6,7 +6,6 @@
     state: absent
   delegate_to: localhost
   become: no
-  ignore_errors: true
 
 - name: ensure public_subnet subnet is removed
   os_subnet:
@@ -14,7 +13,6 @@
     state: absent
   delegate_to: localhost
   become: no
-  ignore_errors: true
 
 - name: ensure public network is removed
   os_network:
@@ -22,7 +20,6 @@
     state: absent
   delegate_to: localhost
   become: no
-  ignore_errors: true
 
 - name: create ifcfg-br-ex file on compute nodes
   template:
@@ -57,7 +54,6 @@
     provider_physical_network: extnet
   delegate_to: localhost
   become: no
-  ignore_errors: true
 
 - name: ensure public_subnet subnet is created
   os_subnet:
@@ -71,7 +67,6 @@
     cidr: "{{ neutron_floating_network }}"
   delegate_to: localhost
   become: no
-  ignore_errors: true
 
 - name: ensure private network is created
   os_network:
@@ -79,7 +74,6 @@
     state: present
   delegate_to: localhost
   become: no
-  ignore_errors: true
 
 - name: ensure private_vmsubnet subnet is created
   os_subnet:
@@ -90,7 +84,6 @@
     cidr: "{{ neutron_private_network }}"
   delegate_to: localhost
   become: no
-  ignore_errors: true
 
 - name: ensure router1 is created
   os_router:
@@ -101,4 +94,3 @@
       - private_vmsubnet
   delegate_to: localhost
   become: no
-  ignore_errors: true

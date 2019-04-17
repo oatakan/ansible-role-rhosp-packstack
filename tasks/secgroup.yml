@@ -18,7 +18,6 @@
   become: no
   with_items:
     - "{{ openstack_projects }}"
-  ignore_errors: yes
 
 - name: add tcp rules to security groups
   os_security_group_rule:
@@ -34,7 +33,6 @@
   with_nested:
     - "{{ openstack_projects }}"
     - "{{ security_rules.tcp.ports }}"
-  ignore_errors: yes
 
 - name: add udp rules to security groups
   os_security_group_rule:
@@ -50,4 +48,3 @@
   with_nested:
     - "{{ openstack_projects }}"
     - "{{ security_rules.udp.ports }}"
-  ignore_errors: yes
