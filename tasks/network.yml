@@ -35,7 +35,7 @@
 
 - name: ensure no ports exist on the public network
   os_port:
-    id: "{{ item.id }}"
+    name: "{{ item.id }}"
     state: absent
   delegate_to: localhost
   become: no
