@@ -47,6 +47,7 @@
 - name: ensure floating ip is not using ports
   os_floating_ip:
     floating_ip_address: "{{ item.fixed_ips[0].ip_address }}"
+    server: "{{ item.device_id }}"
     state: absent
   delegate_to: localhost
   become: no
