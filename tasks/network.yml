@@ -13,11 +13,6 @@
   delegate_to: localhost
   become: no
 
-- debug:
-    var: openstack_networks
-  when:
-    - openstack_networks is defined
-
 - name: gather facts about ports attached to public network
   os_port_facts:
     filters:
@@ -27,11 +22,6 @@
   when:
     - openstack_networks is defined
     - openstack_networks|length > 0
-
-- debug:
-    var: openstack_ports
-  when:
-    - openstack_ports is defined
 
 - name: ensure public_subnet subnet is removed
   os_subnet:
@@ -48,6 +38,8 @@
     state: absent
   delegate_to: localhost
   become: no
+  when:
+    - openstack_ports is undefined or openstack_ports|length == 0
 
 - name: create ifcfg-br-ex file on compute nodes
   template:
