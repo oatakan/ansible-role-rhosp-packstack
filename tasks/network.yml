@@ -33,39 +33,14 @@
   when:
     - openstack_ports is defined
 
-#- name: ensure no ports exist on the public network
-#  os_port:
-#    name: "{{ item.id }}"
-#    state: absent
-#  delegate_to: localhost
-#  become: no
-#  with_items: "{{ openstack_ports }}"
-#  when:
-#    - openstack_ports is defined
-#    - openstack_ports|length > 0
-
-- name: ensure floating ip is not using ports
-  os_floating_ip:
-    floating_ip_address: "{{ item.fixed_ips[0].ip_address }}"
-    server: "{{ item.device_id }}"
-    state: absent
-  delegate_to: localhost
-  become: no
-  with_items: "{{ openstack_ports }}"
-  when:
-    - openstack_ports is defined
-    - openstack_ports|length > 0
-    - item.device_owner == 'network:floatingip'
-    - item.fixed_ips is defined
-    - item.fixed_ips|length > 0
-    - item.fixed_ips[0].ip_address is defined
-
 - name: ensure public_subnet subnet is removed
   os_subnet:
     name: public_subnet
     state: absent
   delegate_to: localhost
   become: no
+  when:
+    - openstack_ports is undefined or openstack_ports|length == 0
 
 - name: ensure public network is removed
   os_network:
