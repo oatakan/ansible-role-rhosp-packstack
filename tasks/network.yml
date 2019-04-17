@@ -7,6 +7,43 @@
   delegate_to: localhost
   become: no
 
+- name: gather facts about public network
+  os_networks_facts:
+    name: public
+  delegate_to: localhost
+  become: no
+
+- debug:
+    var: openstack_networks
+  when:
+    - openstack_networks is defined
+
+- name: gather facts about ports attached to public network
+  os_port_facts:
+    filters:
+      network_id: "{{ openstack_networks[0].id }}"
+  delegate_to: localhost
+  become: no
+  when:
+    - openstack_networks is defined
+    - openstack_networks|length > 0
+
+- debug:
+    var: openstack_ports
+  when:
+    - openstack_ports is defined
+
+- name: ensure no ports exist on the public network
+  os_port:
+    id: "{{ item.id }}"
+    state: absent
+  delegate_to: localhost
+  become: no
+  with_items: "{{ openstack_ports }}"
+  when:
+    - openstack_ports is defined
+    - openstack_ports|length > 0
+
 - name: ensure public_subnet subnet is removed
   os_subnet:
     name: public_subnet
