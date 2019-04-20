@@ -57,11 +57,12 @@
     - ansible_virtualization_role == 'guest'
     - ansible_virtualization_type == "VMware"
 
-- name: set cpu mode to none to increase compatibility
+# set to host-passthrough for nested virt, may need to set this to none in some cases
+- name: set cpu mode to host-passthrough
   lineinfile:
     path: /etc/nova/nova.conf
     regexp: '^cpu_mode=(.*)$'
-    line: 'cpu_mode=none'
+    line: 'cpu_mode=host-passthrough'
     backrefs: yes
   when:
     - ansible_virtualization_role == 'host'
