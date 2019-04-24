@@ -25,8 +25,8 @@
     state: present
     security_group: default
     protocol: tcp
-    port_range_min: "{{ item.1 }}"
-    port_range_max: "{{ item.1 }}"
+    port_range_min: "{{ item.1.min | default(item.1) }}"
+    port_range_max: "{{ item.1.max | default(item.1.min) | default(item.1) }}"
     remote_ip_prefix: 0.0.0.0/0
   delegate_to: localhost
   become: no
@@ -40,8 +40,8 @@
     state: present
     security_group: default
     protocol: udp
-    port_range_min: "{{ item.1 }}"
-    port_range_max: "{{ item.1 }}"
+    port_range_min: "{{ item.1.min | default(item.1) }}"
+    port_range_max: "{{ item.1.max | default(item.1.min) | default(item.1) }}"
     remote_ip_prefix: 0.0.0.0/0
   delegate_to: localhost
   become: no
