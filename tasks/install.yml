@@ -49,6 +49,13 @@
     name: openstack-packstack
     state: latest
 
+# Seems to be needed for OSP 15
+- name: update python3-mako package to the latest version
+  package:
+    name: python3-mako
+    state: latest
+  when: ansible_distribution_major_version|int == 8
+
 - name: deploy packstack
   shell: packstack --allinone --keystone-admin-passwd={{ keystone_admin_password }} --os-heat-install=y --os-heat-cfn-install=y --os-ceilometer-install=y --cinder-volumes-size={{ cinder_volumes_size }} --nova-libvirt-virt-type=kvm
 
