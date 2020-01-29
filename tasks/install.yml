@@ -28,7 +28,7 @@
 
 - name: enable openstack-packstack on CentOS
   yum:
-    name: centos-release-openstack-rocky
+    name: centos-release-openstack-{{ openstack_release_name }}
     state: latest
   when: ansible_distribution == 'CentOS'
 

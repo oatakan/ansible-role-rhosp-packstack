@@ -1,5 +1,7 @@
 ---
 
+openstack_release_name: train
+
 config_file: "{{ lookup('env', 'OS_CLIENT_CONFIG_FILE') }}"
 
 neutron_floating_ip_start: 192.168.1.80
