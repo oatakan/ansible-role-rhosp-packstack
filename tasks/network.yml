@@ -23,6 +23,19 @@
     - openstack_networks is defined
     - openstack_networks|length > 0
 
+- name: ensure public_subnet port is removed
+  os_port:
+    device_id: openstack_ports[0].device_id
+    device_owner: openstack_ports[0].device_owner
+    state: absent
+  delegate_to: localhost
+  become: no
+  register: remove_port
+  when:
+    - openstack_ports is defined
+    - openstack_ports|length == 1
+    - openstack_ports[0].status == 'DOWN'
+
 - name: ensure public_subnet subnet is removed
   os_subnet:
     name: public_subnet
@@ -30,7 +43,7 @@
   delegate_to: localhost
   become: no
   when:
-    - openstack_ports is undefined or openstack_ports|length == 0
+    - openstack_ports is undefined or openstack_ports|length <= 1 or remove_port is success
 
 - name: ensure public network is removed
   os_network:
@@ -39,7 +52,7 @@
   delegate_to: localhost
   become: no
   when:
-    - openstack_ports is undefined or openstack_ports|length == 0
+    - openstack_ports is undefined or openstack_ports|length <= 1 or remove_port is success
 
 - name: create ifcfg-br-ex file on compute nodes
   template:
