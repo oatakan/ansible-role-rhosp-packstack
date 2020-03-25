@@ -56,7 +56,9 @@
     state: latest
     disablerepo: '*'
     enablerepo: 'openstack-*-x86_64-rpms'
-  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version|int == 8
+  when:
+    - openstack_rhel_version|int == 15
+    - ansible_os_family == 'RedHat' and ansible_distribution_major_version|int == 8
 
 - name: deploy packstack
   shell: packstack --allinone --keystone-admin-passwd={{ keystone_admin_password }} --os-heat-install=y --os-heat-cfn-install=y --os-ceilometer-install=y --cinder-volumes-size={{ cinder_volumes_size }} --nova-libvirt-virt-type=kvm
