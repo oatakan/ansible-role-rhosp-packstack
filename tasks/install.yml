@@ -27,10 +27,12 @@
   copy:
     src: kvm-intel.conf
     dest: /etc/modprobe.d/kvm-intel.conf
+  register: enable_nested_kvm
 
 - name: reboot system
   reboot:
     reboot_timeout: 3600
+  when: enable_nested_kvm is changed
 
 - name: copy packstack uninstall script
   copy:
