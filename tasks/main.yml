@@ -1,11 +1,10 @@
 - name: check to see if openstack compute is installed
   shell: source /root/keystonerc_admin && openstack compute service list | grep nova-compute | grep enabled
   register: check_compute
-  ignore_errors: yes
+  failed_when: false
 
 - include_tasks: install.yml
-  when:
-    - check_compute is not success
+  when: check_compute.rc != 0
 
 - name: check openstack config file
   stat:
