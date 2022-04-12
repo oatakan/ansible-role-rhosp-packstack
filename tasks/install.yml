@@ -46,6 +46,11 @@
     state: latest
   when: ansible_distribution in ['CentOS','Rocky','AlmaLinux']
 
+- name: enable powertools
+  command: dnf config-manager --enable powertools
+  args:
+    warn: false
+
 - name: install openstack-packstack package
   yum:
     name: openstack-packstack

@@ -2,6 +2,7 @@
   shell: source /root/keystonerc_admin && openstack compute service list | grep nova-compute | grep enabled
   register: check_compute
   failed_when: false
+  changed_when: false
 
 - include_tasks: install.yml
   when: check_compute.rc != 0
