@@ -44,7 +44,7 @@
   yum:
     name: centos-release-openstack-{{ openstack_release_name }}
     state: latest
-  when: ansible_distribution == 'CentOS'
+  when: ansible_distribution in ['CentOS','Rocky','AlmaLinux']
 
 - name: install openstack-packstack package
   yum:
