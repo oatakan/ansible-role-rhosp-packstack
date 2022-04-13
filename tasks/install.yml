@@ -50,6 +50,7 @@
   command: dnf config-manager --enable powertools
   args:
     warn: false
+  when: ansible_distribution in ['CentOS','Rocky','AlmaLinux']
 
 - name: install openstack-packstack package
   yum:
