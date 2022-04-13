@@ -7,21 +7,23 @@
   delegate_to: localhost
   become: no
 
-- name: gather facts about public network
-  os_networks_facts:
+- name: gather info about public network
+  openstack.cloud.networks_info:
     name: public
   delegate_to: localhost
   become: no
+  register: os_networks_info
 
-- name: gather facts about ports attached to public network
-  os_port_facts:
+- name: gather info about ports attached to public network
+  openstack.cloud.port_info:
     filters:
-      network_id: "{{ openstack_networks[0].id }}"
+      network_id: "{{ os_networks_info.openstack_networks[0].id }}"
+  register: os_port_info
   delegate_to: localhost
   become: no
   when:
-    - openstack_networks is defined
-    - openstack_networks|length > 0
+    - os_networks_info.openstack_networks is defined
+    - os_networks_info.openstack_networks|length > 0
 
 - name: ensure public_subnet port is removed
   os_port:
@@ -32,9 +34,9 @@
   become: no
   register: remove_port
   when:
-    - openstack_ports is defined
-    - openstack_ports|length == 1
-    - openstack_ports[0].status == 'DOWN'
+    - os_port_info.openstack_ports is defined
+    - os_port_info.openstack_ports|length == 1
+    - os_port_info.openstack_ports[0].status == 'DOWN'
 
 - name: ensure public_subnet subnet is removed
   os_subnet:
@@ -43,7 +45,7 @@
   delegate_to: localhost
   become: no
   when:
-    - openstack_ports is undefined or openstack_ports|length <= 1 or remove_port is success
+    - os_port_info.openstack_ports is undefined or os_port_info.openstack_ports|length <= 1 or remove_port is success
 
 - name: ensure public network is removed
   os_network:
@@ -52,7 +54,7 @@
   delegate_to: localhost
   become: no
   when:
-    - openstack_ports is undefined or openstack_ports|length <= 1 or remove_port is success
+    - os_port_info.openstack_ports is undefined or os_port_info.openstack_ports|length <= 1 or remove_port is success
 
 - name: create ifcfg-br-ex file on compute nodes
   template:

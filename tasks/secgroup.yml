@@ -1,7 +1,8 @@
 ---
 
-- name: get project facts
-  os_project_facts:
+- name: get project info
+  openstack.cloud.project_info:
+  register: os_project_info
   delegate_to: localhost
   become: no
 
@@ -16,8 +17,7 @@
     remote_ip_prefix: 0.0.0.0/0
   delegate_to: localhost
   become: no
-  with_items:
-    - "{{ openstack_projects }}"
+  loop: "{{ os_project_info.openstack_projects }}"
 
 - name: add tcp rules to security groups
   os_security_group_rule:
@@ -30,9 +30,7 @@
     remote_ip_prefix: 0.0.0.0/0
   delegate_to: localhost
   become: no
-  with_nested:
-    - "{{ openstack_projects }}"
-    - "{{ security_rules.tcp.ports }}"
+  loop: "{{ os_project_info.openstack_projects|product(security_rules.tcp.ports)|list }}"
 
 - name: add udp rules to security groups
   os_security_group_rule:
@@ -45,6 +43,4 @@
     remote_ip_prefix: 0.0.0.0/0
   delegate_to: localhost
   become: no
-  with_nested:
-    - "{{ openstack_projects }}"
-    - "{{ security_rules.udp.ports }}"
+  loop: "{{ os_project_info.openstack_projects|product(security_rules.udp.ports)|list }}"
