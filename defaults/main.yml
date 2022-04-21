@@ -39,3 +39,4 @@ ssh_port: 22
 keystone_admin_password: password
 
 cinder_volumes_size: 300G
+set_mtu: false

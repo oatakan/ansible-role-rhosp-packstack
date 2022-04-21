@@ -72,6 +72,11 @@
   reboot:
   when: create_bridge_interface_file is changed
 
+- name: adjust mtu
+  command: ovs-vsctl set Interface br-int mtu_request=9000
+  when: set_mtu
+  ignore_errors: true
+
 - name: waiting for keystone to be available
   wait_for:
     host: "{{ ansible_host | default(inventory_hostname) }}"
