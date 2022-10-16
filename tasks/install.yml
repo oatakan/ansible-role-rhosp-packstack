@@ -9,8 +9,8 @@
         state: stopped
 
     - name: install network-scripts
-      package:
-        name: network-scripts
+      yum:
+        name: "{{ legacy_network_scripts_package }}"
         state: present
 
     - name: disable decprecation warnings

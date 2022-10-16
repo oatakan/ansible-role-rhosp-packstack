@@ -41,3 +41,5 @@ keystone_admin_password: password
 
 cinder_volumes_size: 300G
 set_mtu: false
+
+legacy_network_scripts_package: network-scripts
