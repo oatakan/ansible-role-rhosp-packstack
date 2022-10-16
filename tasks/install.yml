@@ -1,29 +1,29 @@
 ---
-- name: disable NetworkManager
-  service:
-    name: NetworkManager
-    enabled: no
-    state: stopped
-  when: ansible_distribution_major_version|int < 9
 
-- name: install network-scripts on RHEL 8
-  package:
-    name: network-scripts
-    state: present
-  when: ansible_distribution_major_version|int == 8
+- name: legacy network on RHEL 8 & 9
+  block:
+    - name: disable NetworkManager
+      service:
+        name: NetworkManager
+        enabled: no
+        state: stopped
 
-- name: disable decprecation warnings
-  file:
-    path: /etc/sysconfig/disable-deprecation-warnings
-    state: touch
-  when: ansible_distribution_major_version|int == 8
+    - name: install network-scripts
+      package:
+        name: network-scripts
+        state: present
 
-- name: enable legacy network service
-  service:
-    name: network
-    enabled: yes
-    state: started
-  when: ansible_distribution_major_version|int < 9
+    - name: disable decprecation warnings
+      file:
+        path: /etc/sysconfig/disable-deprecation-warnings
+        state: touch
+
+    - name: enable legacy network service
+      service:
+        name: network
+        enabled: yes
+        state: started
+  when: ansible_distribution_major_version|int >= 8
 
 - name: enable nested kvm
   copy:
