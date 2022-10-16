@@ -1,42 +1,5 @@
 ---
 
-- name: legacy network on RHEL 8 & 9
-  block:
-    - name: disable NetworkManager
-      service:
-        name: NetworkManager
-        enabled: no
-        state: stopped
-
-    - name: install network-scripts
-      yum:
-        name: "{{ legacy_network_scripts_package }}"
-        state: present
-        disable_gpg_check: "{{ yum_disable_gpg_check }}"
-
-    - name: disable deprecation warnings
-      file:
-        path: /etc/sysconfig/disable-deprecation-warnings
-        state: touch
-
-    - name: enable legacy network service
-      service:
-        name: network
-        enabled: yes
-        state: started
-  when: ansible_distribution_major_version|int >= 8
-
-- name: enable nested kvm
-  copy:
-    src: kvm-intel.conf
-    dest: /etc/modprobe.d/kvm-intel.conf
-  register: enable_nested_kvm
-
-- name: reboot system
-  reboot:
-    reboot_timeout: 3600
-  when: enable_nested_kvm is changed
-
 - name: copy packstack uninstall script
   copy:
     src: uninstall_packstack.sh
@@ -80,6 +43,43 @@
   when:
     - openstack_rhel_version|int == 15
     - ansible_os_family == 'RedHat' and ansible_distribution_major_version|int == 8
+
+- name: legacy network on RHEL 8 & 9
+  block:
+    - name: disable NetworkManager
+      service:
+        name: NetworkManager
+        enabled: no
+        state: stopped
+
+    - name: install network-scripts
+      yum:
+        name: "{{ legacy_network_scripts_package }}"
+        state: present
+        disable_gpg_check: "{{ yum_disable_gpg_check }}"
+
+    - name: disable deprecation warnings
+      file:
+        path: /etc/sysconfig/disable-deprecation-warnings
+        state: touch
+
+    - name: enable legacy network service
+      service:
+        name: network
+        enabled: yes
+        state: started
+  when: ansible_distribution_major_version|int >= 8
+
+- name: enable nested kvm
+  copy:
+    src: kvm-intel.conf
+    dest: /etc/modprobe.d/kvm-intel.conf
+  register: enable_nested_kvm
+
+- name: reboot system
+  reboot:
+    reboot_timeout: 3600
+  when: enable_nested_kvm is changed
 
 - name: deploy packstack
   shell: packstack --allinone --keystone-admin-passwd={{ keystone_admin_password }} --os-heat-install=y --os-heat-cfn-install=y --os-ceilometer-install=y --cinder-volumes-size={{ cinder_volumes_size }} --nova-libvirt-virt-type=kvm
