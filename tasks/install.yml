@@ -43,16 +43,26 @@
     dest: /root/uninstall_packstack.sh
     mode: "u+rwx,g-wx,o-rwx"
 
-- name: enable openstack-packstack on CentOS
-  yum:
-    name: centos-release-openstack-{{ openstack_release_name }}
-    state: latest
-  when: ansible_distribution in ['CentOS','Rocky','AlmaLinux']
-
 - name: enable powertools
   command: dnf config-manager --enable powertools
   args:
     warn: false
+  when:
+    - ansible_distribution in ['CentOS','Rocky','AlmaLinux']
+    - ansible_distribution_major_version|int == 8
+
+- name: enable crb
+  command: dnf config-manager --enable crb
+  args:
+    warn: false
+  when:
+    - ansible_distribution in ['CentOS','Rocky','AlmaLinux']
+    - ansible_distribution_major_version|int == 9
+
+- name: enable openstack-packstack on CentOS
+  yum:
+    name: centos-release-openstack-{{ openstack_release_name }}
+    state: latest
   when: ansible_distribution in ['CentOS','Rocky','AlmaLinux']
 
 - name: install openstack-packstack package
