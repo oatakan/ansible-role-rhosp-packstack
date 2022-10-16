@@ -12,8 +12,9 @@
       yum:
         name: "{{ legacy_network_scripts_package }}"
         state: present
+        disable_gpg_check: "{{ yum_disable_gpg_check }}"
 
-    - name: disable decprecation warnings
+    - name: disable deprecation warnings
       file:
         path: /etc/sysconfig/disable-deprecation-warnings
         state: touch
