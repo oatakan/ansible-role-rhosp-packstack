@@ -90,6 +90,7 @@
     state: latest
   notify: restart httpd service
 
+# Seems to be needed for OSP 15
 # see issue: https://bugs.launchpad.net/nova/+bug/1653430
 - name: fix kvm virtual type for vmware host
   lineinfile:
@@ -98,6 +99,7 @@
     insertafter: '^#hw_machine_type='
     line: 'hw_machine_type=x86_64=pc-i440fx-rhel7.2.0'
   when:
+    - openstack_rhel_version|int == 15
     - ansible_virtualization_role == 'guest'
     - ansible_virtualization_type == "VMware"
 
